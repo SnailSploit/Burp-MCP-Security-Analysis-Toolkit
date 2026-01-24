@@ -1,0 +1,197 @@
+# Burp MCP Analysis Toolkit - Scope Configuration
+# ================================================
+# Copy this file to scope.yaml and configure for your engagement
+#
+# This file defines:
+# - Target domains and boundaries
+# - What to include/exclude from analysis
+# - Which vulnerability indicators to test
+# - Authentication configuration
+
+# =============================================================================
+# TARGET DEFINITION
+# =============================================================================
+target:
+  # Primary target domain (required)
+  primary: https://api.example.com
+  
+  # Additional domains to include (optional)
+  # Useful for: auth servers, CDNs that handle auth, subdomains
+  additional:
+    # - https://auth.example.com
+    # - https://cdn.example.com
+
+# =============================================================================
+# SCOPE BOUNDARIES
+# =============================================================================
+scope:
+  # Paths to INCLUDE (regex patterns)
+  # Only traffic matching these patterns will be analyzed
+  include:
+    - "^/api/.*"           # All /api/ paths
+    - "^/v[0-9]+/.*"       # Versioned API paths (/v1/, /v2/, etc.)
+    - "^/graphql.*"        # GraphQL endpoints
+    - "^/auth/.*"          # Authentication endpoints
+    # Add more patterns as needed
+  
+  # Paths to EXCLUDE (regex patterns)
+  # Traffic matching these patterns will be filtered out
+  exclude:
+    - "^/static/.*"        # Static assets
+    - "^/assets/.*"        # Asset directories
+    - "^/_next/.*"         # Next.js internals
+    - "^/favicon.*"        # Favicons
+    - "^/robots.txt$"      # Robots file
+    - "^/sitemap.*"        # Sitemaps
+    - "^/health$"          # Health checks
+    - "^/ping$"            # Ping endpoints
+    - "^/metrics$"         # Metrics endpoints
+  
+  # File extensions to always exclude
+  exclude_extensions:
+    - ".js"
+    - ".css"
+    - ".png"
+    - ".jpg"
+    - ".jpeg"
+    - ".gif"
+    - ".svg"
+    - ".ico"
+    - ".woff"
+    - ".woff2"
+    - ".ttf"
+    - ".eot"
+    - ".map"
+  
+  # Third-party domains to always exclude
+  # These are common tracking/analytics services
+  exclude_domains:
+    - "*.google-analytics.com"
+    - "*.googleapis.com"
+    - "*.gstatic.com"
+    - "*.cloudflare.com"
+    - "*.cloudflareinsights.com"
+    - "*.sentry.io"
+    - "*.segment.io"
+    - "*.amplitude.com"
+    - "*.mixpanel.com"
+    - "*.hotjar.com"
+    - "*.intercom.io"
+    - "*.facebook.com"
+    - "*.twitter.com"
+    - "*.linkedin.com"
+
+# =============================================================================
+# VULNERABILITY INDICATORS
+# =============================================================================
+indicators:
+  # Which indicators to test
+  # Comment out indicators you don't want to test
+  enabled:
+    - idor              # Insecure Direct Object Reference
+    - bola              # Broken Object Level Authorization
+    - auth_bypass       # Authentication bypass and session issues
+    - ssrf              # Server-Side Request Forgery
+    - injection         # SQL/XSS/Command injection points
+    # - rate_limit      # Rate limiting bypass (optional)
+    # - info_disclosure # Information disclosure (optional)
+  
+  # Indicator-specific configuration (optional)
+  idor:
+    # Minimum length for IDs to consider
+    min_id_length: 1
+    # Maximum length (36 = UUID length)
+    max_id_length: 36
+    # Check numeric IDs
+    check_numeric: true
+    # Check UUID format IDs
+    check_uuid: true
+  
+  ssrf:
+    # Your callback server for SSRF detection
+    # callback_url: "https://your-burp-collaborator-url"
+    # Or use: https://webhook.site/your-unique-id
+    callback_url: null
+
+# =============================================================================
+# AUTHENTICATION CONFIGURATION
+# =============================================================================
+auth:
+  # Authentication type
+  # Options: bearer, cookie, api_key, basic, custom
+  type: bearer
+  
+  # Header name for auth token (for bearer/api_key/custom)
+  header: Authorization
+  
+  # Prefix for token value (for bearer)
+  prefix: "Bearer "
+  
+  # For multi-user testing (IDOR/BOLA)
+  # You need at least two different user contexts
+  contexts:
+    user_a:
+      # User A's description
+      description: "Regular user account"
+      # User A's auth token
+      # Replace with actual token from your testing
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzIiwicm9sZSI6InVzZXIifQ.xxx"
+      # User A's known user ID (for IDOR verification)
+      user_id: "123"
+    
+    user_b:
+      description: "Second regular user account"
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDU2Iiwicm9sZSI6InVzZXIifQ.yyy"
+      user_id: "456"
+    
+    # Optional: admin context for privilege escalation testing
+    # admin:
+    #   description: "Admin account (if available)"
+    #   token: "admin-token-here"
+    #   user_id: "1"
+
+# =============================================================================
+# OUTPUT CONFIGURATION
+# =============================================================================
+output:
+  # Directory for output files
+  directory: ./output
+  
+  # Report format
+  # Options: markdown, json, html (markdown recommended)
+  format: markdown
+  
+  # Include full request/response in report
+  # Set to false for summary-only report
+  include_evidence: true
+  
+  # Redact sensitive values in report
+  # Recommended: true for sharing reports
+  redact_sensitive: true
+
+# =============================================================================
+# ADVANCED OPTIONS
+# =============================================================================
+advanced:
+  # Maximum endpoints to analyze (0 = no limit)
+  max_endpoints: 0
+  
+  # Minimum interest score to include in analysis
+  min_interest_score: 3
+  
+  # Request timeout for active tests (seconds)
+  request_timeout: 30
+  
+  # Rate limit for active tests (requests per second)
+  # Set to 0 for no limit
+  rate_limit: 0
+
+# =============================================================================
+# NOTES
+# =============================================================================
+# Add any engagement-specific notes here:
+#
+# - Testing window: [dates]
+# - Out of scope items: [list]
+# - Special considerations: [notes]
+# - Point of contact: [name/email]
