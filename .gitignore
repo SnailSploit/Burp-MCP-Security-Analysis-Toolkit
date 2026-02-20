@@ -1,0 +1,31 @@
+# Output files (generated during analysis)
+output/endpoints.json
+output/findings/*.md
+output/report.md
+
+# Scope config (contains tokens)
+scope.yaml
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.eggs/
+.pytest_cache/
+
+# System files
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Local testing
+test/
+tmp/

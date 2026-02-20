@@ -1,10 +1,8 @@
-# Burp MCP Toolkit - Python Dependencies
+# Burp MCP Toolkit (SnailSploit Edition) - Python Dependencies
 # Install with: pip install -r requirements.txt
 
 # Required for scope validation
 pyyaml>=6.0
 
-# Optional: For development/testing
-# pytest>=7.0
-# black>=23.0
-# mypy>=1.0
+# Testing
+pytest>=7.0
