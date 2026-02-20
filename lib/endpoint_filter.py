@@ -121,15 +121,15 @@ class Endpoint:
 class EndpointFilter:
     """Filter and prioritize endpoints based on scope configuration."""
     
-    # Endpoint categories
+    # Endpoint categories - ordered by security priority (higher-risk first)
     CATEGORIES = {
-        "auth": ["login", "logout", "register", "signup", "signin", "oauth", "token", "session", "password", "reset", "verify", "confirm", "2fa", "mfa"],
-        "user": ["user", "profile", "account", "me", "self", "settings", "preferences"],
         "admin": ["admin", "manage", "dashboard", "internal", "config", "system"],
-        "api": ["api", "graphql", "rest", "v1", "v2", "v3"],
-        "upload": ["upload", "file", "image", "document", "attachment", "media"],
+        "auth": ["login", "logout", "register", "signup", "signin", "oauth", "token", "session", "password", "reset", "verify", "confirm", "2fa", "mfa"],
         "payment": ["payment", "checkout", "billing", "invoice", "subscription", "order"],
+        "upload": ["upload", "file", "image", "document", "attachment", "media"],
         "data": ["export", "download", "report", "data", "backup"],
+        "user": ["user", "profile", "account", "me", "self", "settings", "preferences"],
+        "api": ["api", "graphql", "rest", "v1", "v2", "v3"],
     }
     
     # Interest score modifiers
@@ -353,7 +353,7 @@ class EndpointFilter:
             try:
                 data = json.loads(body)
                 params = self._extract_json_keys(data)
-            except:
+            except (json.JSONDecodeError, TypeError, ValueError):
                 pass
         
         # Form body
@@ -411,14 +411,33 @@ class EndpointFilter:
         return True
     
     def _classify(self, endpoint: Endpoint) -> str:
-        """Classify endpoint into a category."""
+        """Classify endpoint into a category.
+
+        Uses word-boundary matching on path segments to avoid false positives
+        from substring matches (e.g. 'me' matching inside 'payment').
+        """
+        # Split path into segments for accurate matching
+        path_segments = [s.lower() for s in endpoint.path.split("/") if s and not s.startswith("{")]
         path_lower = endpoint.path.lower()
-        
+
+        best_category = "general"
+        best_score = 0
+
         for category, patterns in self.CATEGORIES.items():
-            if any(pattern in path_lower for pattern in patterns):
-                return category
-        
-        return "general"
+            score = 0
+            for pattern in patterns:
+                # Prefer exact segment match over substring
+                if pattern in path_segments:
+                    score += 2
+                elif pattern in path_lower and len(pattern) > 2:
+                    # Only allow substring match for patterns longer than 2 chars
+                    # to avoid false positives like 'me' in 'payment'
+                    score += 1
+            if score > best_score:
+                best_score = score
+                best_category = category
+
+        return best_category
     
     def _calculate_score(self, endpoint: Endpoint) -> int:
         """Calculate interest score for an endpoint."""

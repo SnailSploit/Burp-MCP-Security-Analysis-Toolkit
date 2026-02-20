@@ -1,7 +1,8 @@
 """
-Burp MCP Toolkit - Python Helper Library
+Burp MCP Toolkit - Python Helper Library (SnailSploit Edition)
 
-This library provides Python utilities for the Burp MCP Security Analysis Toolkit.
+A security analysis framework by SnailSploit that combines Burp Suite's HTTP
+traffic capture with Claude Code's reasoning via MCP (Model Context Protocol).
 
 Modules:
     scope_validator: Validate and parse scope.yaml configuration files
@@ -21,7 +22,8 @@ from .endpoint_filter import EndpointFilter, Endpoint
 from .finding_formatter import Finding, Evidence, Severity, FindingFormatter, finding_from_dict
 from .report_generator import ReportGenerator, ReportConfig
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
+__author__ = "SnailSploit"
 __all__ = [
     # Scope
     "ScopeValidator",

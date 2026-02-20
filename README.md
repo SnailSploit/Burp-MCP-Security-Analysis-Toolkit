@@ -1,33 +1,34 @@
-# Burp MCP Security Analysis Toolkit
+# Burp MCP Security Analysis Toolkit - SnailSploit Edition
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/Platform-macOS-blue.svg)](https://www.apple.com/macos)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-blue.svg)]()
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-green.svg)](https://claude.ai/code)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
+[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)]()
 
-A skills-based security analysis framework that combines **Burp Suite's traffic capture** with **Claude Code's reasoning** via MCP (Model Context Protocol). Instead of ad-hoc prompts, this toolkit encodes expert penetration testing methodology into reusable skill files.
+A skills-based security analysis framework by **SnailSploit** that combines **Burp Suite's traffic capture** with **Claude Code's reasoning** via MCP (Model Context Protocol). Instead of ad-hoc prompts, this toolkit encodes expert penetration testing methodology into reusable skill files.
 
-<p align="center">
-  <img src="https://via.placeholder.com/800x400?text=Burp+MCP+Toolkit+Diagram" alt="Architecture Diagram">
-</p>
-
-## 🎯 Philosophy
+## Philosophy
 
 | Principle | Description |
 |-----------|-------------|
 | **Skills over Prompts** | Expert methodology encoded in skill files, not thrown-together prompts |
-| **Phased Analysis** | Scope → Triage → Analyze → Report (not everything at once) |
+| **Phased Analysis** | Scope > Triage > Analyze > Report (not everything at once) |
 | **Evidence-Required** | No finding without proof from actual HTTP traffic |
 
-## 🚀 Quick Start
+## Quick Start
 
-### Installation (macOS)
+### Installation (macOS / Linux)
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/burp-mcp-toolkit.git
-cd burp-mcp-toolkit
+git clone https://github.com/SnailSploit/Burp-MCP-Security-Analysis-Toolkit.git
+cd Burp-MCP-Security-Analysis-Toolkit
 
-# Run the installer
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run the installer (macOS)
 chmod +x install.sh
 ./install.sh
 
@@ -39,33 +40,47 @@ cp templates/scope-template.yaml scope.yaml
 ./launch.sh
 ```
 
-### Manual Installation
+### CLI Usage
 
-See [Installation Guide](#installation-guide) below for step-by-step manual setup.
+The toolkit includes a unified CLI for standalone operations:
 
-### Usage
+```bash
+# Validate scope configuration
+python -m lib validate scope.yaml
+
+# Generate report from findings
+python -m lib report ./output
+
+# Run interactive demo
+python -m lib demo
+
+# Show version
+python -m lib version
+```
+
+### Claude Code Commands
 
 Once Burp Suite is running with MCP enabled:
 
 ```bash
 # In Claude Code:
 "load scope"      # Validate configuration
-"triage"          # Classify endpoints  
+"triage"          # Classify endpoints
 "analyze all"     # Run all indicator tests
 "report"          # Generate final report
 ```
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
-burp-mcp-toolkit/
+Burp-MCP-Security-Analysis-Toolkit/
 ├── CLAUDE.md                    # Orchestration instructions (auto-loaded)
 ├── README.md                    # This file
 ├── install.sh                   # macOS installer
 ├── launch.sh                    # Launcher script (created by installer)
 ├── scope.yaml                   # Your engagement config (create from template)
 │
-├── skills/                      # 🧠 Methodology files (~80KB of expertise)
+├── skills/                      # Methodology files (~80KB of expertise)
 │   ├── SKILL-burp-mcp.md        # MCP query patterns
 │   ├── SKILL-endpoint-triage.md # Endpoint classification
 │   ├── SKILL-idor-testing.md    # IDOR detection methodology
@@ -75,23 +90,31 @@ burp-mcp-toolkit/
 │   ├── SKILL-injection-points.md# SQLi/XSS vector identification
 │   └── SKILL-report-format.md   # Report generation format
 │
-├── lib/                         # 🐍 Python helpers
+├── lib/                         # Python helpers
+│   ├── __init__.py              # Package exports (v2.1.0)
+│   ├── __main__.py              # CLI entry point
 │   ├── scope_validator.py       # Validate scope.yaml
 │   ├── endpoint_filter.py       # Filter/prioritize endpoints
 │   ├── finding_formatter.py     # Format findings to markdown
 │   └── report_generator.py      # Aggregate findings into report
 │
+├── tests/                       # Test suite
+│   ├── test_scope_validator.py  # Scope validation tests
+│   ├── test_endpoint_filter.py  # Endpoint filtering tests
+│   ├── test_finding_formatter.py# Finding formatting tests
+│   └── test_report_generator.py # Report generation tests
+│
 ├── templates/
 │   ├── scope-template.yaml      # Blank scope configuration
 │   └── finding-template.md      # Finding documentation format
 │
-└── output/                      # 📊 Generated during analysis
+└── output/                      # Generated during analysis
     ├── endpoints.json           # Triaged endpoint list
     ├── findings/                # Per-indicator findings
     └── report.md                # Final consolidated report
 ```
 
-## 🔍 Supported Indicators
+## Supported Indicators
 
 | Indicator | Skill File | What It Finds |
 |-----------|------------|---------------|
@@ -101,7 +124,7 @@ burp-mcp-toolkit/
 | `ssrf` | SKILL-ssrf-testing.md | Server-Side Request Forgery |
 | `injection` | SKILL-injection-points.md | SQLi/XSS/Command injection vectors |
 
-## 💻 Commands Reference
+## Commands Reference
 
 | Command | Phase | Description |
 |---------|-------|-------------|
@@ -115,17 +138,18 @@ burp-mcp-toolkit/
 | `show endpoints` | - | Display triaged endpoints |
 | `inspect {path}` | - | Deep dive on specific endpoint |
 
-## 📋 Prerequisites
+## Prerequisites
 
-- **macOS** (Intel or Apple Silicon)
+- **macOS** (Intel or Apple Silicon) or **Linux**
+- **Python 3.9+**
 - **Burp Suite** Community or Professional
 - **Claude Code** (npm package)
 - **Captured HTTP Traffic** through Burp proxy
 - **Multiple auth contexts** (for IDOR/BOLA testing)
 
-## 🔧 Installation Guide
+## Installation Guide
 
-### Option 1: Automated (Recommended)
+### Option 1: Automated (macOS)
 
 ```bash
 ./install.sh
@@ -141,8 +165,8 @@ This installs: Homebrew, Burp Suite, Caddy, Node.js, Claude Code, and configures
    ```
 
 2. **Install MCP Server Extension**
-   - Open Burp → Extender → BApp Store
-   - Search "MCP Server" → Install
+   - Open Burp > Extender > BApp Store
+   - Search "MCP Server" > Install
    - Export `mcp-proxy.jar` to `~/.burp-mcp-extension/`
 
 3. **Install Caddy** (reverse proxy)
@@ -156,7 +180,7 @@ This installs: Homebrew, Burp Suite, Caddy, Node.js, Claude Code, and configures
    ```
 
 5. **Configure MCP**
-   
+
    Create `~/.claude.json`:
    ```json
    {
@@ -170,7 +194,7 @@ This installs: Homebrew, Burp Suite, Caddy, Node.js, Claude Code, and configures
    ```
 
 6. **Configure Caddy**
-   
+
    Create `~/.config/caddy/Caddyfile`:
    ```
    :9877 {
@@ -180,7 +204,7 @@ This installs: Homebrew, Burp Suite, Caddy, Node.js, Claude Code, and configures
    }
    ```
 
-## 🛡️ Configuration
+## Configuration
 
 Copy and edit the scope template:
 
@@ -196,7 +220,7 @@ Key sections:
 
 See `templates/scope-template.yaml` for full documentation with examples.
 
-## 📊 Output
+## Output
 
 All findings are written to `output/`:
 
@@ -210,19 +234,32 @@ All findings are written to `output/`:
 | `findings/injection.md` | Injection point findings |
 | `report.md` | **Consolidated final report** |
 
-## 🐍 Python Helpers
+## Python Helpers
 
-The `lib/` directory contains standalone Python utilities:
+The `lib/` directory contains standalone Python utilities accessible via CLI:
 
 ```bash
-# Validate scope configuration
-python lib/scope_validator.py scope.yaml
+# Unified CLI
+python -m lib validate scope.yaml
+python -m lib report output/
+python -m lib demo
+python -m lib version
 
-# Generate report from findings
+# Direct module usage
+python lib/scope_validator.py scope.yaml
 python lib/report_generator.py output/
 ```
 
-## ✏️ Extending
+## Testing
+
+Run the full test suite:
+
+```bash
+pip install pytest
+python -m pytest tests/ -v
+```
+
+## Extending
 
 ### Add New Indicator
 
@@ -239,25 +276,25 @@ Follow the structure of existing skills:
 - Evidence requirements
 - Output format
 
-## 🔒 Security Notes
+## Security Notes
 
 - **Scope files contain tokens** - Add `scope.yaml` to `.gitignore`
 - **Use only on authorized targets** - Standard pentest rules apply
 - **Evidence is redacted by default** - Configure in scope.yaml
 
-## 📄 License
+## License
 
 MIT License - See [LICENSE](LICENSE)
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-## 📚 Related Projects
+## Credits
 
-- [Burp Suite MCP Server](https://github.com/PortSwigger/mcp-server)
-- [Claude Code](https://claude.ai/code)
-- [AATMF](https://github.com/example/aatmf) - Adversarial AI Threat Modeling Framework
+- **SnailSploit** - Framework author and maintainer
+- **Kai Aizen** - Original toolkit concept
+- Built with [Burp Suite MCP Server](https://github.com/PortSwigger/mcp-server) and [Claude Code](https://claude.ai/code)
 
 ---
 
