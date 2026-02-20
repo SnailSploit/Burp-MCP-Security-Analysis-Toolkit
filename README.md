@@ -1,3 +1,5 @@
+![Banner](assets/6fd35082-7154-474b-96f4-4086195cf391.png)
+
 # Burp MCP Security Analysis Toolkit - SnailSploit Edition
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
