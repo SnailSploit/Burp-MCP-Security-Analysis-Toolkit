@@ -1,4 +1,4 @@
-![Banner](assets/6fd35082-7154-474b-96f4-4086195cf391.png)
+![Banner](assets/banner.png)
 
 # Burp MCP Security Analysis Toolkit - SnailSploit Edition
 
